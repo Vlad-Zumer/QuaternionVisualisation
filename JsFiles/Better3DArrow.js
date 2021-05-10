@@ -14,6 +14,8 @@ export class Better3DArrow extends THREE.Group {
     constructor(startPoint, endPoint, colorHex = 0x000000, size = 4) {
         super();
 
+        this.__destructors = [];
+
         let cone, line;
         // add make line
         {
@@ -29,13 +31,19 @@ export class Better3DArrow extends THREE.Group {
             line = new Line2(geometry, this.LineMaterial);
             line.computeLineDistances();
             line.scale.set(1, 1, 1);
+
+            let destructor = () => {
+                geometry.dispose();
+                this.LineMaterial.dispose();
+            }
+            this.__destructors.push(destructor);
         }
 
         // make cone
         {
             let baseSize = 0.05 * (size / 4);
             let height = 0.25 * (size / 4);
-            let geometry = new THREE.ConeGeometry(0.05, 0.25, 4);
+            let geometry = new THREE.ConeGeometry(baseSize, height, 4);
             let material = new THREE.MeshBasicMaterial({ color: colorHex });
             cone = new THREE.Mesh(geometry, material);
 
@@ -45,6 +53,12 @@ export class Better3DArrow extends THREE.Group {
             cone.translateY(endPoint.y);
             cone.translateZ(endPoint.z);
             cone.applyQuaternion(rotationQ);
+
+            let destructor = () => {
+                geometry.dispose();
+                material.dispose();
+            }
+            this.__destructors.push(destructor);
         }
 
 
@@ -57,5 +71,12 @@ export class Better3DArrow extends THREE.Group {
 
     OnRendererSizeUpdate() {
         this.LineMaterial.resolution.set(window.innerWidth, window.innerHeight); // resolution of the viewport
+    }
+
+    Destroy() {
+        for (let index = 0; index < this.__destructors.length; index++) {
+            const element = this.__destructors[index];
+            element();
+        }
     }
 }

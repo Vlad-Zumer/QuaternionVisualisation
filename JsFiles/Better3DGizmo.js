@@ -7,11 +7,11 @@ export class Better3DGizmo extends THREE.Group {
     constructor(gridSize = 0, vecSize = 1) {
         super();
 
-        let { line: xLine, material: xMaterial } = MakeLineFromOrigin({ x: vecSize, y: 0, z: 0 }, 0xff0000);
-        let { line: yLine, material: yMaterial } = MakeLineFromOrigin({ x: 0, y: vecSize, z: 0 }, 0x00ff00);
-        let { line: zLine, material: zMaterial } = MakeLineFromOrigin({ x: 0, y: 0, z: vecSize }, 0x0000ff);
+        let { line: xLine, material: xMaterial, destructor: desX } = MakeLineFromOrigin({ x: vecSize, y: 0, z: 0 }, 0xff0000);
+        let { line: yLine, material: yMaterial, destructor: desY } = MakeLineFromOrigin({ x: 0, y: vecSize, z: 0 }, 0x00ff00);
+        let { line: zLine, material: zMaterial, destructor: desZ } = MakeLineFromOrigin({ x: 0, y: 0, z: vecSize }, 0x0000ff);
 
-        let sphere = MakeSphereAtOrigin();
+        let { sphere: sphere, destructor: desSphere } = MakeSphereAtOrigin();
         let grid = MakeGrid(gridSize);
 
         this.add(xLine);
@@ -19,6 +19,12 @@ export class Better3DGizmo extends THREE.Group {
         this.add(zLine);
         this.add(sphere);
         this.add(grid);
+
+        this.__destructors = [];
+        this.__destructors.push(desX);
+        this.__destructors.push(desY);
+        this.__destructors.push(desZ);
+        this.__destructors.push(desSphere);
 
         this.LineMaterials = [];
         this.LineMaterials.push(xMaterial);
@@ -35,6 +41,13 @@ export class Better3DGizmo extends THREE.Group {
             this.LineMaterials[index].resolution.set(window.innerWidth, window.innerHeight); // resolution of the viewport
         }
 
+    }
+
+    Destroy() {
+        for (let index = 0; index < this.__destructors.length; index++) {
+            const element = this.__destructors[index];
+            element();
+        }
     }
 }
 
@@ -59,7 +72,12 @@ function MakeLineFromOrigin(dirObj, colorHex) {
     line.computeLineDistances();
     line.scale.set(1, 1, 1);
 
-    return { line: line, material: matLine };
+    let destructor = () => {
+        geometry.dispose();
+        matLine.dispose();
+    }
+
+    return { line: line, material: matLine, destructor: destructor };
 }
 
 
@@ -68,7 +86,12 @@ function MakeSphereAtOrigin() {
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const sphere = new THREE.Mesh(geometry, material);
 
-    return sphere;
+    let destructor = () => {
+        geometry.dispose();
+        material.dispose();
+    }
+
+    return { sphere, destructor };
 }
 
 function MakeGrid(size) {

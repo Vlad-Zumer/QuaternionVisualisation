@@ -183,10 +183,14 @@ function UpdateScene() {
 
 	// Axis of rotation
 	{
-		scene.remove(axisOfRotation);
+		if (axisOfRotation && Object.keys(axisOfRotation).length !== 0) {
+			// remove only if it exists
+			scene.remove(axisOfRotation);
+			WindowResizeListenerObjects = WindowResizeListenerObjects.filter(val => val !== axisOfRotation);
+			axisOfRotation.Destroy();
+		}
 		// do not show if there is no rotation
 		if (!rotation.equals(new THREE.Quaternion().identity())) {
-			WindowResizeListenerObjects = WindowResizeListenerObjects.filter(val => val !== axisOfRotation);
 			if (GUIObject.bindedObj['Quaternion Actual Values']['Show Axis Of Rotation']) {
 				let { axis, _ } = GetAxisAngle(rotation);
 				axisOfRotation = new Better3DArrow(axis.clone().normalize().multiplyScalar(-3), axis.clone().normalize().multiplyScalar(3));
@@ -198,8 +202,12 @@ function UpdateScene() {
 
 	// Rotation Arch
 	{
-		scene.remove(rotationPath);
-		WindowResizeListenerObjects = WindowResizeListenerObjects.filter(val => val !== rotationPath);
+		if (rotationPath && Object.keys(rotationPath).length !== 0) {
+			// remove only if it exists
+			scene.remove(rotationPath);
+			WindowResizeListenerObjects = WindowResizeListenerObjects.filter(val => val !== rotationPath);
+			rotationPath.Destroy();
+		}
 		let { _, angle } = GetAxisAngle(rotation);
 		const angleDeg = THREE.MathUtils.radToDeg(angle);
 		const showMiddleArrow = angleDeg > 30.0 && (objectToRotate.position.clone().sub(rotatedObject.position.clone()).length() > 0.4);

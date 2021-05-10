@@ -14,10 +14,15 @@ export class QuatRotationArch extends THREE.Group {
     constructor(startPoint, quat, showArrow = true, colorHex = 0x000000, size = 4) {
         super();
 
+        this.__destructors = [];
+
         this.LineMaterial = new LineMaterial({
             color: colorHex,
             linewidth: size,
         });
+
+        let matDestructor = () => { this.LineMaterial.dispose() }
+        this.__destructors.push(matDestructor);
 
         let resolution = 360;
 
@@ -31,8 +36,9 @@ export class QuatRotationArch extends THREE.Group {
                 let q = new THREE.Quaternion().identity();
                 q.slerp(quat, t);
                 endPos = startPos.clone().applyQuaternion(q);
-                let line = _MakeLine(startPos, endPos, this.LineMaterial);
+                let { line, destructor } = _MakeLine(startPos, endPos, this.LineMaterial);
                 this.add(line);
+                this.__destructors.push(destructor);
                 startPos = endPos;
             }
         }
@@ -59,6 +65,12 @@ export class QuatRotationArch extends THREE.Group {
             cone.applyQuaternion(coneRotation);
 
             this.add(cone);
+            const destructor = () => {
+                geometry.dispose();
+                material.dispose();
+            };
+
+            this.__destructors.push(destructor);
         }
 
         this.OnRendererSizeUpdate();
@@ -67,6 +79,13 @@ export class QuatRotationArch extends THREE.Group {
 
     OnRendererSizeUpdate() {
         this.LineMaterial.resolution.set(window.innerWidth, window.innerHeight); // resolution of the viewport
+    }
+
+    Destroy() {
+        for (let index = 0; index < this.__destructors.length; index++) {
+            const element = this.__destructors[index];
+            element();
+        }
     }
 }
 
@@ -79,5 +98,7 @@ function _MakeLine(startPosition, endPosition, material) {
     line.computeLineDistances();
     line.scale.set(1, 1, 1);
 
-    return line
+    let destructor = () => { geometry.dispose(); }
+
+    return { line, destructor }
 }
