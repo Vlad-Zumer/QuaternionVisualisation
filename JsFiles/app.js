@@ -1,11 +1,3 @@
-// import * as THREE from 'https://cdn.skypack.dev/three';
-// import { OrbitControls } from 'https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js';
-// import { Line2 } from 'https://cdn.skypack.dev/three/examples/jsm/lines/Line2.js';
-// import { LineMaterial } from 'https://cdn.skypack.dev/three/examples/jsm/lines/LineMaterial.js';
-// import { LineGeometry } from 'https://cdn.skypack.dev/three/examples/jsm/lines/LineGeometry.js';
-// import { GeometryUtils } from 'https://cdn.skypack.dev/three/examples/jsm/utils/GeometryUtils.js';
-// import { GUI } from 'https://cdn.skypack.dev/three/examples/jsm/libs/dat.gui.module.js';
-
 import * as THREE from './threeJSLocal/build/three.module.js';
 import { OrbitControls } from './threeJSLocal/examples/jsm/controls/OrbitControls.js';
 import { GUI } from './threeJSLocal/examples/jsm/libs/dat.gui.module.js';
@@ -316,11 +308,6 @@ function ApplyQuaternionRotation() {
 	newRot.w = GUIObject.bindedObj['Inputs']['Quaternion Proportional Input']['W'];
 	newRot = newRot.normalize();
 
-	// GUIObject.bindedObj['Inputs']['Quaternion Proportional Input']['X'] = newRot.x;
-	// GUIObject.bindedObj['Inputs']['Quaternion Proportional Input']['Y'] = newRot.y;
-	// GUIObject.bindedObj['Inputs']['Quaternion Proportional Input']['Z'] = newRot.z;
-	// GUIObject.bindedObj['Inputs']['Quaternion Proportional Input']['W'] = newRot.w;
-
 	rotation = newRot.clone();
 	MoveObjectToPosition(
 		rotatedObject,
@@ -447,7 +434,7 @@ document.body.appendChild(renderer.domElement);
 // Add objects
 Add3DOriginGizmo(scene);
 
-let rotation = new THREE.Quaternion();//.setFromEuler(new THREE.Euler(0, THREE.MathUtils.degToRad(180), 0.7))//0.5773503, 0.5773503, 0.5773503, 0);//0.5, 0.5, 0.5, 0.5);
+let rotation = new THREE.Quaternion().identity();
 let objectToRotate = {};
 let rotatedObject = {};
 let rotationPath = {};
