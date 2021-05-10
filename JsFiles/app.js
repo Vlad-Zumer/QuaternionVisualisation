@@ -73,7 +73,7 @@ function GUIInit() {
 				'Axis X': GUIObjHelpers.CreateNumberSlider(0, 0, 5, 0.001),
 				'Axis Y': GUIObjHelpers.CreateNumberSlider(0, 0, 5, 0.001),
 				'Axis Z': GUIObjHelpers.CreateNumberSlider(0, 0, 5, 0.001),
-				'Angle': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.5),
+				'Angle': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.1),
 				'Normalize Axis Display': function () { NormalizeAxisDisplay(); },
 			},
 			'Quaternion Proportional Input': {
