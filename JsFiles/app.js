@@ -73,9 +73,9 @@ function GUIInit() {
 			'Active Input Type': GUIObjHelpers.CreateOptions('Euler Angles', ['Euler Angles', 'Axis-Angle', 'Quaternion']),
 			'Euler Angles Input': {
 				'Order': GUIObjHelpers.CreateOptions('XYZ', ['XYZ', 'ZYX', 'YZX']),
-				'Rot X': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.5),
-				'Rot Y': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.5),
-				'Rot Z': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.5),
+				'Rot X': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.1),
+				'Rot Y': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.1),
+				'Rot Z': GUIObjHelpers.CreateNumberSlider(0, -180, 180, 0.1),
 			},
 			'Axis-Angle Input': {
 				'Axis X': GUIObjHelpers.CreateNumberSlider(0, 0, 5, 0.001),
