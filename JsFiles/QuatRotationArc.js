@@ -31,15 +31,29 @@ export class QuatRotationArch extends THREE.Group {
             let startPos = startPoint.clone();
             let endPos;
             let t = 1 / resolution;
-
+            let points = [];
+            points.push(startPoint);
             for (var indx = 0; indx < resolution; indx++) {
                 let q = new THREE.Quaternion().identity();
                 q.slerp(quat, t);
                 endPos = startPos.clone().applyQuaternion(q);
-                let { line, destructor } = _MakeLine(startPos, endPos, this.LineMaterial);
-                this.add(line);
-                this.__destructors.push(destructor);
+                points.push(endPos);
                 startPos = endPos;
+            }
+
+            // Make line
+            {
+                points = points.map(vec => Object.values(vec)).flat(); // convert from array of vec3 to array with stride
+                let geometry = new LineGeometry().setPositions(points);
+
+                let line = new Line2(geometry, this.LineMaterial);
+                line.computeLineDistances();
+                line.scale.set(1, 1, 1);
+
+                let destructor = () => { geometry.dispose(); }
+                this.__destructors.push(destructor)
+
+                this.add(line);
             }
         }
 
@@ -87,18 +101,4 @@ export class QuatRotationArch extends THREE.Group {
             element();
         }
     }
-}
-
-function _MakeLine(startPosition, endPosition, material) {
-    let positions = [startPosition.x, startPosition.y, startPosition.z, endPosition.x, endPosition.y, endPosition.z];
-    let geometry = new LineGeometry();
-    geometry.setPositions(positions);
-
-    let line = new Line2(geometry, material);
-    line.computeLineDistances();
-    line.scale.set(1, 1, 1);
-
-    let destructor = () => { geometry.dispose(); }
-
-    return { line, destructor }
 }
