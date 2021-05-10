@@ -192,12 +192,15 @@ function UpdateScene() {
 	// Axis of rotation
 	{
 		scene.remove(axisOfRotation);
-		WindowResizeListenerObjects = WindowResizeListenerObjects.filter(val => val !== axisOfRotation);
-		if (GUIObject.bindedObj['Quaternion Actual Values']['Show Axis Of Rotation']) {
-			let { axis, _ } = GetAxisAngle(rotation);
-			axisOfRotation = new Better3DArrow(axis.clone().normalize().multiplyScalar(-3), axis.clone().normalize().multiplyScalar(3));
-			scene.add(axisOfRotation);
-			WindowResizeListenerObjects.push(axisOfRotation);
+		// do not show if there is no rotation
+		if (!rotation.equals(new THREE.Quaternion().identity())) {
+			WindowResizeListenerObjects = WindowResizeListenerObjects.filter(val => val !== axisOfRotation);
+			if (GUIObject.bindedObj['Quaternion Actual Values']['Show Axis Of Rotation']) {
+				let { axis, _ } = GetAxisAngle(rotation);
+				axisOfRotation = new Better3DArrow(axis.clone().normalize().multiplyScalar(-3), axis.clone().normalize().multiplyScalar(3));
+				scene.add(axisOfRotation);
+				WindowResizeListenerObjects.push(axisOfRotation);
+			}
 		}
 	}
 
