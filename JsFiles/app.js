@@ -210,7 +210,7 @@ function UpdateScene() {
 		WindowResizeListenerObjects = WindowResizeListenerObjects.filter(val => val !== rotationPath);
 		let { _, angle } = GetAxisAngle(rotation);
 		const angleDeg = THREE.MathUtils.radToDeg(angle);
-		const showMiddleArrow = angleDeg > 30.0;
+		const showMiddleArrow = angleDeg > 30.0 && (objectToRotate.position.clone().sub(rotatedObject.position.clone()).length() > 0.4);
 		rotationPath = new QuatRotationArch(objectToRotate.position.clone(), rotation.clone(), showMiddleArrow);
 		scene.add(rotationPath);
 		WindowResizeListenerObjects.push(rotationPath);
